@@ -1,0 +1,7 @@
+[project]
+name = "disasm2vec"
+version = "0.1.0"
+description = "disasm2vec is a Python-based research framework for learning vector representations from disassembled C/C++ binaries."
+authors = [
+    { name = "Ahmad Nur Rohim", email = "ahmadnurrohim2812@gmail.com" }
+]
