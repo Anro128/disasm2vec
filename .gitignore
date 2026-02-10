@@ -1,2 +1,11 @@
 data/
 .venv/
+src/disasm2vec.egg-info/
+src/disasm2vec/__pycache__/
+src/disasm2vec/compiler/__pycache__/
+src/disasm2vec/disassembler/__pycache__/
+src/disasm2vec/evaluation/__pycache__/
+src/disasm2vec/pipeline/__pycache__/
+src/disasm2vec/preprocess/__pycache__/
+src/disasm2vec/utils/__pycache__/
+src/disasm2vec/vectorizer/__pycache__/
