@@ -10,16 +10,6 @@ MEMORY_PATTERN = re.compile(
 SYMBOL_PATTERN = re.compile(r"<.*?>")
 
 
-def normalize_control_operand(mnemonic: str, operand: str) -> str:
-    if mnemonic == "call":
-        return "FUNC"
-
-    if mnemonic.startswith("j"):
-        return "JMP"
-
-    return operand
-
-
 def normalize_operand(operand: str, keep_register: bool = False) -> str:
     operand = SYMBOL_PATTERN.sub("", operand)
 

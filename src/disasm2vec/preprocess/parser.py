@@ -1,13 +1,12 @@
 import re
 from pathlib import Path
 from .cleaner import is_instruction_line
-from .normalizer import (
-    normalize_operand,
-    normalize_control_operand,
-)
+from .normalizer import normalize_operand
+
 
 BYTE_PATTERN = re.compile(r"^[0-9a-fA-F]{2}$")
 MNEMONIC_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")
+FUNCTION_HEADER = re.compile(r"<(.+?)>:")
 
 
 def parse_instruction(line: str, keep_register: bool = False):
@@ -34,7 +33,6 @@ def parse_instruction(line: str, keep_register: bool = False):
         return None
 
     operand_str = " ".join(tokens[i + 1 :]).strip()
-
     result = [mnemonic]
 
     if mnemonic == "call":
@@ -54,38 +52,115 @@ def parse_instruction(line: str, keep_register: bool = False):
 
     return result
 
-def parse_file(path: str, keep_register: bool = False) -> list[str]:
-    path = Path(path)
-    corpus = []
+
+def _split_functions(path: Path) -> dict[str, list[str]]:
+    functions = {}
+    current = None
 
     with path.open() as f:
         for line in f:
-            if not is_instruction_line(line):
+            header = FUNCTION_HEADER.search(line)
+            if header:
+                current = header.group(1)
+                functions[current] = []
                 continue
 
-            tokens = parse_instruction(
-                line,
-                keep_register=keep_register,
-            )
-            if tokens:
-                corpus.append(" ".join(tokens))
+            if current and is_instruction_line(line):
+                functions[current].append(line)
 
-    return corpus
+    return functions
+
+
+def _extract_call_target(line: str) -> str | None:
+    if "call" not in line:
+        return None
+
+    if "<" in line and ">" in line:
+        return line.split("<")[1].split(">")[0]
+
+    return None
+
+
+def _expand_function(
+    func_name: str,
+    functions: dict[str, list[str]],
+    keep_register: bool,
+    visited: set,
+) -> list[str]:
+    """
+    Inline user-defined function bodies at call sites.
+    """
+    if func_name in visited:
+        return []
+
+    visited.add(func_name)
+
+    result = []
+
+    for line in functions.get(func_name, []):
+        tokens = parse_instruction(
+            line,
+            keep_register=keep_register,
+        )
+
+        if not tokens:
+            continue
+
+        if tokens[0] == "call":
+            callee = _extract_call_target(line)
+
+            if (
+                callee
+                and "@plt" not in callee
+                and callee in functions
+            ):
+                result.extend(
+                    _expand_function(
+                        callee,
+                        functions,
+                        keep_register,
+                        visited,
+                    )
+                )
+                continue
+
+        result.append(" ".join(tokens))
+
+    return result
+
+
+def parse_file(
+    path: str,
+    keep_register: bool = False,
+    entry: str = "main",
+) -> list[str]:
+    """
+    Parse file and inline user-defined function calls
+    inside selected entry function.
+    """
+    path = Path(path)
+
+    functions = _split_functions(path)
+
+    if entry not in functions:
+        raise ValueError(f"Function '{entry}' not found.")
+
+    return _expand_function(
+        entry,
+        functions,
+        keep_register,
+        visited=set(),
+    )
+
 
 def parse_folder(
     asm_dir: str,
     keep_register: bool = False,
+    entry: str = "main",
 ) -> dict[str, list[str]]:
     """
-    Parse all .asm files in a folder and keep results per file.
-
-    Returns
-    -------
-    dict[str, list[str]]
-        {
-            "file.asm": ["mov REG REG", "call FUNC", ...],
-            ...
-        }
+    Parse all .asm files in a folder.
+    Each file processed independently.
     """
     asm_dir = Path(asm_dir)
 
@@ -103,6 +178,7 @@ def parse_folder(
         result[asm_file.name] = parse_file(
             asm_file,
             keep_register=keep_register,
+            entry=entry,
         )
 
     return result
