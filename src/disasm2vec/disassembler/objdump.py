@@ -90,7 +90,7 @@ def disassemble_folder(
         asm_out = out_dir / f"{binary.name}.asm"
 
         try:
-            disassemble_file(binary, asm_out, full=full)
+            disassemble(binary, asm_out, full=full)
         except DisassemblyError as e:
             raise DisassemblyError(
                 f"Disassembly failed for {binary}:\n{e}"

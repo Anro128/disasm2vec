@@ -175,7 +175,7 @@ def parse_folder(
     result: dict[str, list[str]] = {}
 
     for asm_file in asm_files:
-        result[asm_file.name] = parse_file(
+        result[asm_file.name] = parse(
             asm_file,
             keep_register=keep_register,
             entry=entry,
