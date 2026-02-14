@@ -3,7 +3,7 @@ from pathlib import Path
 from .errors import DisassemblyError
 
 
-def disassemble_file(
+def disassemble(
     binary: str,
     output: str,
     arch: str | None = None,

@@ -129,7 +129,7 @@ def _expand_function(
     return result
 
 
-def parse_file(
+def parse(
     path: str,
     keep_register: bool = False,
     entry: str = "main",
