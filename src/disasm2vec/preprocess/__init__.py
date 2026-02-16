@@ -1,4 +1,4 @@
-from .parser import parse_file, parse_folder
+from .parser import parse, parse_folder
 
 __all__ = [
     "parse",

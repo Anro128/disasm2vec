@@ -1,4 +1,4 @@
-from .objdump import disassemble_file, disassemble_folder
+from .objdump import disassemble, disassemble_folder
 
 __all__ = [
     "disassemble",
