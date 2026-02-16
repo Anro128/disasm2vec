@@ -17,7 +17,7 @@ class PipelineConfig:
     arch: Optional[str] = None
     full_disasm: bool = False
 
-    # preprocess
+    # tokenizer
     entry: str = "main"
     keep_register: bool = False
 

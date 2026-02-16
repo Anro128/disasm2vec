@@ -9,7 +9,7 @@ MNEMONIC_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")
 FUNCTION_HEADER = re.compile(r"<(.+?)>:")
 
 
-def parse_instruction(line: str, keep_register: bool = False):
+def tokenize_instruction(line: str, keep_register: bool = False):
     line = line.split("#", 1)[0]
 
     if ":" not in line:
@@ -98,7 +98,7 @@ def _expand_function(
     result = []
 
     for line in functions.get(func_name, []):
-        tokens = parse_instruction(
+        tokens = tokenize_instruction(
             line,
             keep_register=keep_register,
         )
@@ -129,7 +129,7 @@ def _expand_function(
     return result
 
 
-def parse(
+def tokenize(
     path: str,
     keep_register: bool = False,
     entry: str = "main",
@@ -153,7 +153,7 @@ def parse(
     )
 
 
-def parse_folder(
+def tokenize_batch(
     asm_dir: str,
     keep_register: bool = False,
     entry: str = "main",
@@ -175,7 +175,7 @@ def parse_folder(
     result: dict[str, list[str]] = {}
 
     for asm_file in asm_files:
-        result[asm_file.name] = parse(
+        result[asm_file.name] = tokenize(
             asm_file,
             keep_register=keep_register,
             entry=entry,

@@ -2,7 +2,7 @@ from pathlib import Path
 
 from disasm2vec.compiler import compile_c, compile_cpp
 from disasm2vec.disassembler import disassemble
-from disasm2vec.preprocess import parse
+from disasm2vec.tokenizer import tokenize
 from disasm2vec.vectorizer import vectorize
 
 from .config import PipelineConfig
@@ -13,7 +13,7 @@ def run_pipeline(config: PipelineConfig):
     Run pipeline for single source file.
 
     Flow:
-        source -> compile -> disassemble -> preprocess -> vectorize
+        source -> compile -> disassemble -> tokenizer -> vectorize
     """
 
     source = Path(config.source_file)
@@ -55,8 +55,8 @@ def run_pipeline(config: PipelineConfig):
             full=config.full_disasm,
         )
 
-    # PREPROCESS
-    corpus = parse(
+    # TOKENIZER
+    corpus = tokenize(
         path=asm_path,
         entry=config.entry,
         keep_register=config.keep_register,

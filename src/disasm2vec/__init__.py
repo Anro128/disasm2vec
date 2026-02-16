@@ -2,14 +2,14 @@
 
 from . import compiler
 from . import disassembler
-from . import preprocess
+from . import tokenizer
 from . import vectorizer
 from . import pipeline
 
 __all__ = [
     "compiler",
     "disassembler",
-    "preprocess",
+    "tokenizer",
     "vectorizer",
     "pipeline",
 ]
