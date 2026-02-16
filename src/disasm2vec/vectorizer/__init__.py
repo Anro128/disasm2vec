@@ -1,3 +1,3 @@
-from .tfidf import vectorize
+from .tfidf import Tfidf
 
-__all__ = ["vectorize"]
+__all__ = ["Tfidf"]
