@@ -10,7 +10,6 @@ class TestCompiler(unittest.TestCase):
         source = "test.c"
         output = "test"
         
-        # Mock file existence check
         with patch("pathlib.Path.exists", return_value=True):
             gcc.compile_c(source, output)
             
@@ -26,7 +25,6 @@ class TestCompiler(unittest.TestCase):
         source = "test.cpp"
         output = "test"
         
-        # Mock file existence check
         with patch("pathlib.Path.exists", return_value=True):
             gcc.compile_cpp(source, output)
             
@@ -52,10 +50,9 @@ class TestCompiler(unittest.TestCase):
     @patch("pathlib.Path.rglob")
     @patch("pathlib.Path.mkdir")
     def test_compile_folder(self, mock_mkdir, mock_rglob, mock_run):
-        # Mock finding one C file and one C++ file
         mock_rglob.side_effect = [
-            [Path("src/a.c")], # .c files
-            [Path("src/b.cpp")] # .cpp files
+            [Path("src/a.c")], 
+            [Path("src/b.cpp")] 
         ]
         
         with patch("pathlib.Path.exists", return_value=True):

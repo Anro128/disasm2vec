@@ -27,7 +27,7 @@ class TestVectorizer(unittest.TestCase):
     @patch("sklearn.feature_extraction.text.TfidfVectorizer.transform")
     def test_transform(self, mock_transform):
         vectorizer = tfidf.Tfidf()
-        vectorizer._fitted = True # Manually set fitted
+        vectorizer._fitted = True 
         
         vectorizer.transform(self.documents)
         mock_transform.assert_called_once_with(self.documents)
@@ -40,10 +40,10 @@ class TestVectorizer(unittest.TestCase):
     def test_validate_docs(self):
         vectorizer = tfidf.Tfidf()
         with self.assertRaises(TypeError):
-            vectorizer.fit("invalid docs") # Not iterable
+            vectorizer.fit("invalid docs") 
             
         with self.assertRaises(TypeError):
-            vectorizer.fit(["invalid doc"]) # Inner not list
+            vectorizer.fit(["invalid doc"]) 
 
     @patch("pickle.dump")
     @patch("builtins.open")
@@ -51,7 +51,6 @@ class TestVectorizer(unittest.TestCase):
         vectorizer = tfidf.Tfidf()
         vectorizer._fitted = True
         
-        # Mock open context manager
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         
@@ -66,11 +65,9 @@ class TestVectorizer(unittest.TestCase):
     def test_load(self, mock_open, mock_load):
         vectorizer = tfidf.Tfidf()
         
-        # Mock loaded vectorizer
         mock_loaded_vec = MagicMock()
         mock_load.return_value = mock_loaded_vec
         
-        # Mock open context manager
         mock_file = MagicMock()
         mock_open.return_value.__enter__.return_value = mock_file
         

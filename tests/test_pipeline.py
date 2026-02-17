@@ -18,7 +18,6 @@ class TestPipeline(unittest.TestCase):
             model_path="model.pkl"
         )
         
-        # Mocks
         mock_tokenize.return_value = ["mov", "eax", "ebx"]
         mock_transform.return_value = "vector"
         
@@ -30,7 +29,6 @@ class TestPipeline(unittest.TestCase):
             self.assertEqual(X, "vector")
             self.assertIsInstance(vectorizer, Tfidf)
             
-            # Verify calls
             mock_compile.assert_called_once()
             mock_disassemble.assert_called_once()
             mock_tokenize.assert_called_once()
@@ -42,7 +40,7 @@ class TestPipeline(unittest.TestCase):
             source_file="test.c",
             build_dir="build",
             asm_dir="asm",
-            model_path=None # Missing model path
+            model_path=None 
         )
         
         with patch("pathlib.Path.exists", return_value=True), \

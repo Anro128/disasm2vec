@@ -3,6 +3,9 @@ import pickle
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+    
+def identity(x):
+    return x
 
 class Tfidf:
     """
@@ -29,8 +32,8 @@ class Tfidf:
         norm: str | None = "l2",
     ):
         self.vectorizer = TfidfVectorizer(
-            tokenizer=lambda x: x,
-            preprocessor=lambda x: x,
+            tokenizer=identity,
+            preprocessor=identity,
             token_pattern=None,
             lowercase=False,
             max_features=max_features,
