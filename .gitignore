@@ -9,3 +9,4 @@ src/disasm2vec/pipeline/__pycache__/
 src/disasm2vec/tokenizer/__pycache__/
 src/disasm2vec/utils/__pycache__/
 src/disasm2vec/vectorizer/__pycache__/
+tests/__pycache__
