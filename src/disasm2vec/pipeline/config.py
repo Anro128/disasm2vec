@@ -22,6 +22,7 @@ class PipelineConfig:
     keep_register: bool = False
 
     # vectorizer
+    model_path: Optional[str] = None
     max_features: Optional[int] = None
     ngram_range: Tuple[int, int] = (1, 2)
     min_df: int = 1

@@ -3,7 +3,7 @@ from pathlib import Path
 from disasm2vec.compiler import compile_c, compile_cpp
 from disasm2vec.disassembler import disassemble
 from disasm2vec.tokenizer import tokenize
-from disasm2vec.vectorizer import vectorize
+from disasm2vec.vectorizer import Tfidf
 
 from .config import PipelineConfig
 
@@ -63,6 +63,16 @@ def run_pipeline(config: PipelineConfig):
     )
 
     # VECTORIZE
-    X, _, vectorizer = vectorize([corpus])
+    if not config.model_path:
+        raise ValueError("model_path is required for pipeline")
+
+    vectorizer = Tfidf(
+        max_features=config.max_features,
+        ngram_range=config.ngram_range,
+        min_df=config.min_df,
+    )
+    vectorizer.load(config.model_path)
+    
+    X = vectorizer.transform_one(corpus)
 
     return X, vectorizer
