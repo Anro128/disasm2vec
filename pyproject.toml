@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "disasm2vec"
 version = "0.1.0"
-description = "disasm2vec is a Python-based research framework for learning vector representations from disassembled C/C++ binaries."
+description = "disasm2vec is a research framework designed to generate vector representations from disassembled C/C++ binaries. It provides a modular pipeline that handles compilation, disassembly, tokenization, and vectorization, enabling researchers and security analysts to transform raw code into machine-learning-ready features."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
@@ -15,3 +15,8 @@ dependencies = [
     "scikit-learn>=1.0.0",
     "numpy>=1.20.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/Anro128/disasm2vec"
+Issues = "https://github.com/Anro128/disasm2vec/issues"
+Changelog = "https://github.com/Anro128/disasm2vec/blob/main/CHANGELOG.md"
