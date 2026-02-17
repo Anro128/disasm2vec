@@ -1,13 +1,14 @@
-from typing import List, Iterable, Optional, Tuple
+from typing import List, Iterable, Optional, Tuple, Union
 import pickle
 from pathlib import Path
 from sklearn.feature_extraction.text import TfidfVectorizer
+from .base import VectorizerBase
 
     
 def identity(x):
     return x
 
-class Tfidf:
+class Tfidf(VectorizerBase):
     """
     TF-IDF vectorizer for assembly instruction tokens.
 
@@ -92,13 +93,13 @@ class Tfidf:
         return self.vectorizer.get_feature_names_out().tolist()
 
     # SAVE / LOAD
-    def save(self, path: str | Path):
+    def save(self, path: Union[str, Path]):
         self._check_fitted()
 
         with open(path, "wb") as f:
             pickle.dump(self.vectorizer, f)
 
-    def load(self, path: str | Path):
+    def load(self, path: Union[str, Path]):
         with open(path, "rb") as f:
             self.vectorizer = pickle.load(f)
 

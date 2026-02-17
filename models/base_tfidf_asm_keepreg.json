@@ -1,0 +1,27 @@
+{
+  "model_type": "tfidf",
+  "vectorizer": {
+    "max_features": 5000,
+    "ngram_range": [
+      1,
+      2
+    ],
+    "min_df": 2,
+    "max_df": 1.0,
+    "norm": "l2",
+    "use_idf": true
+  },
+  "dataset": {
+    "num_documents": 653,
+    "avg_length": 153.9770290964778,
+    "hash": "2ad5da17cc369457374e2a4465e8bd5c753981f79fe9e8cd61cd2ad231be26fb"
+  },
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39"
+  },
+  "training": {
+    "timestamp": "2026-02-17T16:14:02.894795",
+    "source_dataset": "dataset_tokens_keep_register.csv"
+  }
+}
