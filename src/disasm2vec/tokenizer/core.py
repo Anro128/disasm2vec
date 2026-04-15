@@ -9,7 +9,7 @@ MNEMONIC_PATTERN = re.compile(r"^[a-zA-Z][a-zA-Z0-9]*$")
 FUNCTION_HEADER = re.compile(r"<(.+?)>:")
 
 
-def tokenize_instruction(line: str, keep_register: bool = False):
+def tokenize_instruction(line: str, mode: str = "both_generic"):
     line = line.split("#", 1)[0]
 
     if ":" not in line:
@@ -33,24 +33,49 @@ def tokenize_instruction(line: str, keep_register: bool = False):
         return None
 
     operand_str = " ".join(tokens[i + 1 :]).strip()
-    result = [mnemonic]
 
-    if mnemonic == "call":
-        result.append("FUNC")
-        return result
+    # Parse mode
+    if mode == "mnemonic_only":
+        include_mnemonic = True
+        include_operand = False
+        keep_register = False
+    elif mode == "operand_generic":
+        include_mnemonic = False
+        include_operand = True
+        keep_register = False
+    elif mode == "operand_specific":
+        include_mnemonic = False
+        include_operand = True
+        keep_register = True
+    elif mode == "both_generic":
+        include_mnemonic = True
+        include_operand = True
+        keep_register = False
+    elif mode == "both_specific":
+        include_mnemonic = True
+        include_operand = True
+        keep_register = True
+    else:
+        raise ValueError(f"Invalid tokenization mode: {mode}. Valid modes: 'mnemonic_only', 'operand_generic', 'operand_specific', 'both_generic', 'both_specific'")
 
-    if mnemonic.startswith("j"):
-        result.append("JMP")
-        return result
+    result = []
 
-    if operand_str:
-        operands = [op.strip() for op in operand_str.split(",")]
-        for op in operands:
-            result.append(
-                normalize_operand(op, keep_register=keep_register)
-            )
+    if include_mnemonic:
+        result.append(mnemonic)
 
-    return result
+    if include_operand:
+        if mnemonic == "call":
+            result.append("FUNC")
+        elif mnemonic.startswith("j"):
+            result.append("JMP")
+        elif operand_str:
+            operands = [op.strip() for op in operand_str.split(",")]
+            for op in operands:
+                result.append(
+                    normalize_operand(op, keep_register=keep_register)
+                )
+
+    return result if result else None
 
 
 def _split_functions(path: Path) -> dict[str, list[str]]:
@@ -84,7 +109,7 @@ def _extract_call_target(line: str) -> str | None:
 def _expand_function(
     func_name: str,
     functions: dict[str, list[str]],
-    keep_register: bool,
+    mode: str,
     visited: set,
 ) -> list[str]:
     """
@@ -100,13 +125,17 @@ def _expand_function(
     for line in functions.get(func_name, []):
         tokens = tokenize_instruction(
             line,
-            keep_register=keep_register,
+            mode=mode,
         )
 
         if not tokens:
             continue
 
-        if tokens[0] == "call":
+        # Determine if mnemonic is included
+        include_mnemonic = mode in ["mnemonic_only", "both_generic", "both_specific"]
+        mnemonic_index = 0 if include_mnemonic else None
+
+        if mnemonic_index is not None and tokens[mnemonic_index] == "call":
             callee = _extract_call_target(line)
 
             if (
@@ -118,7 +147,7 @@ def _expand_function(
                     _expand_function(
                         callee,
                         functions,
-                        keep_register,
+                        mode,
                         visited,
                     )
                 )
@@ -131,7 +160,7 @@ def _expand_function(
 
 def tokenize(
     path: str,
-    keep_register: bool = False,
+    mode: str = "both_generic",
     entry: str = "main",
 ) -> list[str]:
     """
@@ -148,14 +177,14 @@ def tokenize(
     return _expand_function(
         entry,
         functions,
-        keep_register,
+        mode,
         visited=set(),
     )
 
 
 def tokenize_batch(
     asm_dir: str,
-    keep_register: bool = False,
+    mode: str = "both_generic",
     entry: str = "main",
 ) -> dict[str, list[str]]:
     """
@@ -177,7 +206,7 @@ def tokenize_batch(
     for asm_file in asm_files:
         result[asm_file.name] = tokenize(
             asm_file,
-            keep_register=keep_register,
+            mode=mode,
             entry=entry,
         )
 

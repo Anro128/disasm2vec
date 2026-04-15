@@ -19,7 +19,7 @@ class PipelineConfig:
 
     # tokenizer
     entry: str = "main"
-    keep_register: bool = False
+    mode: str = "both_generic"
 
     # vectorizer
     model_path: Optional[str] = None

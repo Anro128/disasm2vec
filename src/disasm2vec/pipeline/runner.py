@@ -58,8 +58,8 @@ def run_pipeline(config: PipelineConfig):
     # TOKENIZER
     corpus = tokenize(
         path=asm_path,
+        mode=config.mode,
         entry=config.entry,
-        keep_register=config.keep_register,
     )
 
     # VECTORIZE
